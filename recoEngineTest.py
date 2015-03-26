@@ -52,6 +52,8 @@ def collabFilteringTest():
     params = np.array([random.random() for _ in xrange(params_length)])
 
     # run training
-    recoEngine.collabFiltering(filename, params, args)
+    res = recoEngine.collabFiltering(filename, params, args)
+    print "Optimized preference vector and feature vector: {0}".format(res)
+    return res
 
 collabFilteringTest()
