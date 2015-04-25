@@ -2,11 +2,23 @@ import recoEngine
 import numpy as np
 import random
 
-def loadRatingsFromFileTest():
-    filename = './ml-100k/u.data'
-    print recoEngine.loadRatingsFromFile(filename)[1]
+def loadMoviesIntoDBFromFileTest():
+    filename = './ml-1m/movies.dat'
+    recoEngine.loadMoviesIntoDBFromFile(filename)
 
-# loadRatingsFromFileTest()
+# loadMoviesIntoDBFromFileTest()
+
+def loadUsersIntoDBFromFileTest():
+    filename = './ml-1m/users.dat'
+    recoEngine.loadUsersIntoDBFromFile(filename)
+
+# loadUsersIntoDBFromFileTest()
+
+def loadRatingsIntoDBFromFileTest():
+    filename = './ml-1m/ratings.dat'
+    recoEngine.loadRatingsIntoDBFromFile(filename)
+
+# loadRatingsIntoDBFromFileTest()
 
 def cofiCostFuncTest():
     num_users = 2
@@ -38,12 +50,11 @@ def cofiCostFuncGradTest():
 # cofiCostFuncGradTest()
 
 def collabFilteringTest():
-    filename = './ml-100k/u.data'
     num_features = 10
     lambda_reg = 1.5
 
-    print(" Reading ratings from {0} ...".format(filename))
-    args = recoEngine.loadRatingsFromFile(filename) + (num_features, lambda_reg)
+    print(" Loading ratings from database ...")
+    args = recoEngine.readRatingsFromDB() + (num_features, lambda_reg)
     num_users = args[2]
     num_movies = args[3]
 
@@ -52,8 +63,34 @@ def collabFilteringTest():
     params = np.array([random.random() for _ in xrange(params_length)])
 
     # run training
-    res = recoEngine.collabFiltering(filename, params, args)
-    print "Optimized preference vector and feature vector: {0}".format(res)
-    return res
+    (X, Theta) = recoEngine.collabFiltering(params, args)
+    print "Updating X and Theta into database..."
+    recoEngine.updateXandThetaIntoDB(X, Theta)
 
-collabFilteringTest()
+# collabFilteringTest()
+
+def updateXandThetaIntoDBTest():
+    X = np.array([
+        [1,1,1,1],
+        [2,2,2,2],
+        [3,3,3,3]
+    ])
+
+    Theta = np.array([
+        [1,1,1,1],
+        [2,2,2,2],
+        [3,3,3,3]
+    ])
+
+    recoEngine.updateXandThetaIntoDB(X, Theta)
+
+# updateXandThetaIntoDBTest()
+
+if __name__ == '__main__':
+    # set-up database from files
+    loadMoviesIntoDBFromFileTest()
+    loadUsersIntoDBFromFileTest()
+    loadRatingsIntoDBFromFileTest()
+
+    # run reco algo
+    collabFilteringTest()
