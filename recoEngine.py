@@ -8,6 +8,7 @@ def loadMoviesIntoDBFromFile(filename):
     db = client.mlMovieDb
     # set up the collection
     movie = db.movie
+    movie.remove({})
 
     # start reading file
     file = open(filename, 'r')
@@ -15,7 +16,7 @@ def loadMoviesIntoDBFromFile(filename):
     for line in file:
         line_split = line.split("::")
         movie_id = line_split[0]
-        movie_name = line_split[1]
+        movie_name = unicode(line_split[1])
         genres = line_split[2].split("|")
         # since movie_id is not continuous, movie_idx is added to help calculation in Y and R
         movie_document = {"_id": movie_id, "movie_idx": movie_idx, "movie_name": movie_name, "genres": genres, "x":[1]*10}
@@ -33,6 +34,7 @@ def loadUsersIntoDBFromFile(filename):
     db = client.mlMovieDb
     # set up the collection
     user = db.user
+    user.remove({})
 
     file = open(filename, 'r')
     user_idx = 0
@@ -55,6 +57,7 @@ def loadRatingsIntoDBFromFile(filename):
     db = client.mlMovieDb
     # set up the collection
     ratings = db.ratings
+    ratings.remove({})
 
     file = open(filename, 'r')
     for line in file:
