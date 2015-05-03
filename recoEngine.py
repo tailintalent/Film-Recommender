@@ -16,7 +16,7 @@ def loadMoviesIntoDBFromFile(filename):
     for line in file:
         line_split = line.split("::")
         movie_id = line_split[0]
-        movie_name = unicode(line_split[1])
+        movie_name = unicode(line_split[1],errors='replace')
         genres = line_split[2].split("|")
         # since movie_id is not continuous, movie_idx is added to help calculation in Y and R
         movie_document = {"_id": movie_id, "movie_idx": movie_idx, "movie_name": movie_name, "genres": genres, "x":[1]*10}
@@ -166,7 +166,7 @@ def cofiCostFuncGrad(params, *args):
     return np.append(X_grad.ravel(), Theta_grad.ravel())
 
 def collabFiltering(params, args):
-    res = optimize.fmin_cg(cofiCostFunc, params, fprime=cofiCostFuncGrad, args=args, maxiter=1000)
+    res = optimize.fmin_cg(cofiCostFunc, params, fprime=cofiCostFuncGrad, args=args, maxiter=10)
     num_users = args[2]
     num_movies = args[3]
     num_features = len(params)/(num_movies + num_users)

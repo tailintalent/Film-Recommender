@@ -37,7 +37,7 @@ app = Flask(__name__)
 def prepareDB():
     recoEngineTest.loadMoviesIntoDBFromFileTest()
     recoEngineTest.loadUsersIntoDBFromFileTest()
-    recoEngineTest.loadRatingsIntoDBFromFileTest()
+    #recoEngineTest.loadRatingsIntoDBFromFileTest()
 
 @app.route('/Movies/', methods=['GET','POST'])
 def ML():
@@ -83,12 +83,17 @@ def ML_reRate():
     movie_to_rate.remove({})
     return redirect(url_for('ML_updated'))
 
+@app.route('/Movies/allMovies/')
+def ML_allMovies():
+    movie=client.mlMovieDb.movie
+    num_movie=movie.count()
+    return render_template('ML_allMovies.html',movie=movie,num_movie=num_movie)
+
 def optimizeTheta():
     num_rated=movie_to_rate.count()
     Y=np.zeros((num_rated,1))
     X=np.zeros((num_rated,num_features))
     for i in range(num_rated):
-        #print movie_to_rate.find()[i]
         Y[i]=int(movie_to_rate.find()[i]['Rating'])
         X[i]=movie_to_rate.find()[i]['x']
     R=np.ones((num_rated,1))
@@ -110,20 +115,35 @@ def optimizeTheta():
     print "Best guess of rating="+str((np.dot(X,Theta_list[k].transpose()[1:,:])+Theta_list[k][0,0]).transpose())
     print "User rating:"+str(Y.transpose())
 
-    return (Theta_list[k],Error_list[k],Theta_list, Error_list,)
+    return (Theta_list[k],Error_list[k],Theta_list, Error_list)
 
 
+def recommendMovies(Theta):
+    X_all=np.zeros((num_movie,num_features))
+    for i in range(num_movie):
+        X_all[i]=movie.find()[i]['x']
+    theta=np.matrix(Theta).transpose()
+    #print theta
+    #print X_all
+    rating_calculate=np.dot(X_all,theta[1:])+theta[0]
+    #print rating_calculate
+    index=np.matrix(np.linspace(1,num_movie,num_movie)).transpose()
+    rating_with_index=np.zeros((num_movie,2))
+    rating_with_index[:,:1]=index
+    rating_with_index[:,1:]=rating_calculate
+    rating_sort=rating_with_index[np.array(rating_with_index[:,1].argsort(axis=0).tolist()).ravel()]
+    print rating_with_index
+    print rating_sort
 
-@app.route('/allMovies/')
-def ML_allMovies():
-    movies=client.mlMovieDb.movie
-    num_movie=movies.count()
-    return render_template('ML_allMovies.html',movies=movies,num_movie=num_movie)
+    return (rating_sort,rating_with_index)
+
 
 if __name__ == '__main__':
     #prepareDB()
-    optimizeTheta()
-    #app.debug = True
-    #app.run(host='0.0.0.0', port=5000)
+    (Theta,Error,Theta_list, Error_list)=optimizeTheta()
+    recommendMovies(Theta)
+    app.debug = True
+    app.run(host='0.0.0.0', port=5000)
+
     #loadRatingsIntoDBFromFileTest()
     client.close()

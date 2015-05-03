@@ -88,9 +88,9 @@ def updateXandThetaIntoDBTest():
 
 if __name__ == '__main__':
     # set-up database from files
-    loadMoviesIntoDBFromFileTest()
-    loadUsersIntoDBFromFileTest()
-    loadRatingsIntoDBFromFileTest()
+    #loadMoviesIntoDBFromFileTest()
+    #loadUsersIntoDBFromFileTest()
+    #loadRatingsIntoDBFromFileTest()
 
     # run reco algo
     collabFilteringTest()

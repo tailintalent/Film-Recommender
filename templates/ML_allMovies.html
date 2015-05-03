@@ -1,11 +1,10 @@
 <html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title>Here is the list of all movies</title>
-</head>
+
+
 <body>
+<h1>Here is the list of all the movies:</h1>
 {% for i in range(num_movie) %}
-<p>{{movies[i]}}</p>
+<p>{{movie.find()[i]['movie_idx']}}:{{movie.find()[i]['movie_name']}}</p>
 {% endfor %}
 
 </body>
