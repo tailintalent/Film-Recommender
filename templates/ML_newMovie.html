@@ -1,0 +1,26 @@
+<html>
+<body>
+<h1>{{Movie_chosen[movie_id]['movie_name']}}</h1>
+
+<h2>Introduction:</h2>
+<p>genres:{{Movie_chosen[movie_id]['genres'][0]}}</p>
+
+<div>
+
+<form method = 'POST'>
+
+<p>Rating:
+
+<input type='text' size='15' name='name'>
+
+<input type='submit' value='Submit'></p>
+
+</form>
+
+<p><a href={{url_for('ML_updated')}}>Return</a></p>
+
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<html>
+<body>
+
+<h2>Movies to rate:</h2>
+
+
+{%for i in range(num)%}
+<div>
+<p>{{Movie_chosen[i]['movie_name']}}<a href={{url_for('ML_newMovie',movie_id=i)}}> Details</a></p>
+
+
+<form method = 'POST'>
+
+<p>Rating:
+
+<input type='text' size='15' name={{nametag[i]}}>
+
+<input type='submit' value='Submit'></p>
+
+</form>
+
+</div>
+
+{% endfor %}
+
+
+</body>
+</html>
